@@ -19,7 +19,7 @@ constexpr void Traverse(const int X,
     }
 
     auto index = X + Y * MapDimensions.first;
-    if (Map[index] == 0 || Paths[index] != 0) {
+    if (Map[index] == 0 || Paths[index] >= 0) {
         return;
     }
     Paths[index] = ParentIndex;
@@ -42,7 +42,7 @@ bool FindPath(std::pair<int, int> Start,
 
 
     // List containing which path point to check next. Most back element is the least heavy choice.
-    std::vector<int> checkList(Map.size(), 0);
+    std::vector<int> checkList(Map.size(), -1);
     int checkIndex = 0;
     int checkPlacementIndex = 0;
     // History for traversing back to where you started
@@ -52,16 +52,16 @@ bool FindPath(std::pair<int, int> Start,
     int y = Start.second;
     int startIndex = x + y * MapDimensions.first;
     int targetIndex = Target.first + Target.second * MapDimensions.first;
-    paths[startIndex] = -1;
-    int pathIndex = -1;
+    paths[startIndex] = startIndex;
+    int pathIndex = startIndex;
 
     auto now2   = std::chrono::high_resolution_clock::now();
     auto after_mseconds2 = duration_cast<std::chrono::nanoseconds>(now2 - epoch2).count();
     std::cout << "Time setup: " << (after_mseconds2 - before_mseconds2) << " ns" << std::endl;
-
-    auto epoch1 = std::chrono::high_resolution_clock::from_time_t(0);
-    auto before1   = std::chrono::high_resolution_clock::now();
-    auto before_mseconds1 = duration_cast<std::chrono::nanoseconds>(before1 - epoch1).count();
+//
+//    auto epoch1 = std::chrono::high_resolution_clock::from_time_t(0);
+//    auto before1   = std::chrono::high_resolution_clock::now();
+//    auto before_mseconds1 = duration_cast<std::chrono::nanoseconds>(before1 - epoch1).count();
 
 
     while (pathIndex != targetIndex) {
@@ -85,15 +85,15 @@ bool FindPath(std::pair<int, int> Start,
         }
     }
 
-    auto now1   = std::chrono::high_resolution_clock::now();
-    auto after_mseconds1 = duration_cast<std::chrono::nanoseconds>(now1 - epoch1).count();
-    std::cout << "Time run: " << (after_mseconds1 - before_mseconds1) << " ns" << std::endl;
-
+//    auto now1   = std::chrono::high_resolution_clock::now();
+//    auto after_mseconds1 = duration_cast<std::chrono::nanoseconds>(now1 - epoch1).count();
+//    std::cout << "Time run: " << (after_mseconds1 - before_mseconds1) << " ns" << std::endl;
+//
     auto epoch = std::chrono::high_resolution_clock::from_time_t(0);
     auto before   = std::chrono::high_resolution_clock::now();
     auto before_mseconds = duration_cast<std::chrono::nanoseconds>(before - epoch).count();
 
-    while (pathIndex != -1) {
+    while (pathIndex != startIndex) {
         OutPath.insert(OutPath.begin(), pathIndex);
         pathIndex = paths[pathIndex];
     }
