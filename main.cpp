@@ -5,9 +5,10 @@
 #include <iostream>
 #include <chrono>
 
-void Traverse(const int X,
+constexpr void Traverse(const int X,
               const int Y,
               const int ParentIndex,
+              const int CheckIndex,
               std::vector<int> &CheckList,
               std::vector<int> &Paths,
               const std::vector<int> &Map,
@@ -25,7 +26,7 @@ void Traverse(const int X,
 
     // Point or index is traversable, save it for later checking
     // Prioritize points to check
-    CheckList.emplace_back(index);
+    CheckList[CheckIndex] = index;
 }
 
 bool FindPath(std::pair<int, int> Start,
@@ -40,10 +41,10 @@ bool FindPath(std::pair<int, int> Start,
 
 
     // List containing which path point to check next. Most back element is the least heavy choice.
-    std::vector<int> checkList;
+    std::vector<int> checkList(Map.size(), 0);
     int checkIndex = 0;
     // History for traversing back to where you started
-    std::vector<int> paths(Map.size(), 0);
+    std::vector<int> paths(checkList);
 
     int x = Start.first;
     int y = Start.second;
@@ -64,10 +65,10 @@ bool FindPath(std::pair<int, int> Start,
     while (pathIndex != targetIndex) {
 
         // Check this points neighbors and order their weight afterwards.
-        Traverse(x + 1, y, pathIndex, checkList, paths, Map, MapDimensions);
-        Traverse(x - 1, y, pathIndex, checkList, paths, Map, MapDimensions);
-        Traverse(x, y + 1, pathIndex, checkList, paths, Map, MapDimensions);
-        Traverse(x, y - 1, pathIndex, checkList, paths, Map, MapDimensions);
+        Traverse(x + 1, y, pathIndex, checkIndex, checkList, paths, Map, MapDimensions);
+        Traverse(x - 1, y, pathIndex, checkIndex, checkList, paths, Map, MapDimensions);
+        Traverse(x, y + 1, pathIndex, checkIndex, checkList, paths, Map, MapDimensions);
+        Traverse(x, y - 1, pathIndex, checkIndex, checkList, paths, Map, MapDimensions);
 
         // Ready next point to check
         if (checkIndex < static_cast<int>(checkList.size())) {
