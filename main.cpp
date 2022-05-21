@@ -55,14 +55,14 @@ void Traverse(const int X,
 //        }
 //    }
 //    std::cout << "end " << std::endl;
-    auto epoch = std::chrono::high_resolution_clock::from_time_t(0);
-    auto before   = std::chrono::high_resolution_clock::now();
-    auto before_mseconds = duration_cast<std::chrono::nanoseconds>(before - epoch).count();
-    CheckList.insert(CheckList.begin(), mapPoint);
-
-    auto now   = std::chrono::high_resolution_clock::now();
-    auto after_mseconds = duration_cast<std::chrono::nanoseconds>(now - epoch).count();
-    std::cout << "Time: " << (after_mseconds - before_mseconds) << " ns" << std::endl;
+//    auto epoch = std::chrono::high_resolution_clock::from_time_t(0);
+//    auto before   = std::chrono::high_resolution_clock::now();
+//    auto before_mseconds = duration_cast<std::chrono::nanoseconds>(before - epoch).count();
+//    CheckList.insert(CheckList.begin(), mapPoint);
+    CheckList.emplace_back(mapPoint);
+//    auto now   = std::chrono::high_resolution_clock::now();
+//    auto after_mseconds = duration_cast<std::chrono::nanoseconds>(now - epoch).count();
+//    std::cout << "Time: " << (after_mseconds - before_mseconds) << " ns" << std::endl;
 
 }
 
@@ -75,6 +75,7 @@ bool FindPath(std::pair<int, int> Start,
 
     // List containing which path point to check next. Most back element is the least heavy choice.
     std::vector<MapPoint> checkList;
+    int checkIndex = 0;
     // History for traversing back to where you started
     int* paths = new int[Map.size()];
     for (int i = 0; i < Map.size(); i++)
@@ -97,15 +98,16 @@ bool FindPath(std::pair<int, int> Start,
 
         // Ready next point to check
         if (!checkList.empty()) {
-            MapPoint &nearestPoint = checkList.back();
+            MapPoint &nearestPoint = checkList[checkIndex];
+            checkIndex++;
 
             pathIndex = nearestPoint.index;
 
             x = pathIndex % MapDimensions.first;
             y = pathIndex / MapDimensions.first;
 
-            // Remove to not recheck and to avoid comparing weight to this
-            checkList.pop_back();
+//            // Remove to not recheck and to avoid comparing weight to this
+//            checkList.pop_back();
         } else {
             // No more routes to check
             return false;
